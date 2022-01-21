@@ -57,7 +57,7 @@ fn main() {
         .add_plugin(PixelBorderPlugin {
             color: Color::rgb(0.1, 0.1, 0.1),
         })
-        .add_startup_system(setup.system())
+        .add_startup_system(setup.system()) // as of bevy 0.6, calling .system() is optional. Leaving it.
         .run();
 }
 

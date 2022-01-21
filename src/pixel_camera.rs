@@ -1,5 +1,5 @@
-use bevy::prelude::{Bundle, GlobalTransform, Mat4, Reflect, ReflectComponent, Transform};
-use bevy::render::camera::{Camera, CameraProjection, DepthCalculation, VisibleEntities};
+use bevy::prelude::{Bundle, Component, GlobalTransform, Mat4, Transform};
+use bevy::render::camera::{Camera, CameraProjection, DepthCalculation};
 
 /// Provides the components for the camera entity.
 ///
@@ -9,7 +9,7 @@ use bevy::render::camera::{Camera, CameraProjection, DepthCalculation, VisibleEn
 pub struct PixelCameraBundle {
     pub camera: Camera,
     pub pixel_projection: PixelProjection,
-    pub visible_entities: VisibleEntities,
+    // pub visible_entities: VisibleEntities,
     pub transform: Transform,
     pub global_transform: GlobalTransform,
 }
@@ -25,11 +25,11 @@ impl PixelCameraBundle {
         let far = projection.far;
         Self {
             camera: Camera {
-                name: Some(bevy::render::render_graph::base::camera::CAMERA_2D.to_string()),
+                name: Some(bevy::render::camera::CameraPlugin::CAMERA_2D.to_string()),
                 ..Default::default()
             },
             pixel_projection: projection,
-            visible_entities: Default::default(),
+            // visible_entities: Default::default(),
             transform: Transform::from_xyz(0.0, 0.0, far - 0.1),
             global_transform: Default::default(),
         }
@@ -41,7 +41,7 @@ impl PixelCameraBundle {
         let far = 1000.0;
         Self {
             camera: Camera {
-                name: Some(bevy::render::render_graph::base::camera::CAMERA_2D.to_string()),
+                name: Some(bevy::render::camera::CameraPlugin::CAMERA_2D.to_string()),
                 ..Default::default()
             },
             pixel_projection: PixelProjection {
@@ -49,7 +49,7 @@ impl PixelCameraBundle {
                 desired_height: Some(height),
                 ..Default::default()
             },
-            visible_entities: Default::default(),
+            // visible_entities: Default::default(),
             transform: Transform::from_xyz(0.0, 0.0, far - 0.1),
             global_transform: Default::default(),
         }
@@ -61,14 +61,14 @@ impl PixelCameraBundle {
         let far = 1000.0;
         Self {
             camera: Camera {
-                name: Some(bevy::render::render_graph::base::camera::CAMERA_2D.to_string()),
+                name: Some(bevy::render::camera::CameraPlugin::CAMERA_2D.to_string()),
                 ..Default::default()
             },
             pixel_projection: PixelProjection {
                 desired_width: Some(width),
                 ..Default::default()
             },
-            visible_entities: Default::default(),
+            // visible_entities: Default::default(),
             transform: Transform::from_xyz(0.0, 0.0, far - 0.1),
             global_transform: Default::default(),
         }
@@ -80,14 +80,14 @@ impl PixelCameraBundle {
         let far = 1000.0;
         Self {
             camera: Camera {
-                name: Some(bevy::render::render_graph::base::camera::CAMERA_2D.to_string()),
+                name: Some(bevy::render::camera::CameraPlugin::CAMERA_2D.to_string()),
                 ..Default::default()
             },
             pixel_projection: PixelProjection {
                 desired_height: Some(height),
                 ..Default::default()
             },
-            visible_entities: Default::default(),
+            // visible_entities: Default::default(),
             transform: Transform::from_xyz(0.0, 0.0, far - 0.1),
             global_transform: Default::default(),
         }
@@ -99,8 +99,7 @@ impl PixelCameraBundle {
 /// It is similar to Bevy's OrthographicProjection, except integral world
 /// coordinates are always aligned with virtual pixels (as defined by the zoom
 /// field).
-#[derive(Debug, Clone, Reflect)]
-#[reflect(Component)]
+#[derive(Debug, Clone, Component)]
 pub struct PixelProjection {
     pub left: f32,
     pub right: f32,
@@ -175,6 +174,10 @@ impl CameraProjection for PixelProjection {
 
     fn depth_calculation(&self) -> DepthCalculation {
         DepthCalculation::ZDifference
+    }
+
+    fn far(&self) -> f32 {
+        self.far
     }
 }
 
