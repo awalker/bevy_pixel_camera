@@ -1,5 +1,6 @@
 use bevy::prelude::{Bundle, Component, GlobalTransform, Mat4, Transform};
 use bevy::render::camera::{Camera, CameraProjection, DepthCalculation};
+use bevy::render::view::VisibleEntities;
 
 /// Provides the components for the camera entity.
 ///
@@ -9,7 +10,7 @@ use bevy::render::camera::{Camera, CameraProjection, DepthCalculation};
 pub struct PixelCameraBundle {
     pub camera: Camera,
     pub pixel_projection: PixelProjection,
-    // pub visible_entities: VisibleEntities,
+    pub visible_entities: VisibleEntities,
     pub transform: Transform,
     pub global_transform: GlobalTransform,
 }
@@ -29,7 +30,7 @@ impl PixelCameraBundle {
                 ..Default::default()
             },
             pixel_projection: projection,
-            // visible_entities: Default::default(),
+            visible_entities: Default::default(),
             transform: Transform::from_xyz(0.0, 0.0, far - 0.1),
             global_transform: Default::default(),
         }
@@ -49,7 +50,7 @@ impl PixelCameraBundle {
                 desired_height: Some(height),
                 ..Default::default()
             },
-            // visible_entities: Default::default(),
+            visible_entities: Default::default(),
             transform: Transform::from_xyz(0.0, 0.0, far - 0.1),
             global_transform: Default::default(),
         }
@@ -68,7 +69,7 @@ impl PixelCameraBundle {
                 desired_width: Some(width),
                 ..Default::default()
             },
-            // visible_entities: Default::default(),
+            visible_entities: Default::default(),
             transform: Transform::from_xyz(0.0, 0.0, far - 0.1),
             global_transform: Default::default(),
         }
@@ -87,7 +88,7 @@ impl PixelCameraBundle {
                 desired_height: Some(height),
                 ..Default::default()
             },
-            // visible_entities: Default::default(),
+            visible_entities: Default::default(),
             transform: Transform::from_xyz(0.0, 0.0, far - 0.1),
             global_transform: Default::default(),
         }
