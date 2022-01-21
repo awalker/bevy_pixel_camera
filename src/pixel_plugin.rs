@@ -1,6 +1,4 @@
-use bevy::prelude::{
-    App, Assets, Commands, CoreStage, Handle, IntoSystem, Mesh, Plugin, ResMut, StartupStage,
-};
+use bevy::prelude::{App, CoreStage, IntoSystem, Plugin};
 use bevy::render::camera;
 
 /// Provides the camera system, and the quad resource for sprite meshes.

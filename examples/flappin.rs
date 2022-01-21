@@ -1,5 +1,5 @@
 use bevy::{core::FixedTimestep, prelude::*};
-use bevy_pixel_camera::{PixelBorderPlugin, PixelCameraBundle, PixelCameraPlugin, PixelSpriteQuad};
+use bevy_pixel_camera::{PixelBorderPlugin, PixelCameraBundle, PixelCameraPlugin};
 
 // GAME CONSTANTS /////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@ enum GameState {
 }
 
 fn main() {
-    App::build()
+    App::new()
         .add_state(GameState::StartScreen)
         .add_event::<ActionEvent>()
         .insert_resource(WindowDescriptor {
@@ -59,8 +59,8 @@ fn main() {
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .insert_resource(Timer::from_seconds(0.25, false))
         .add_startup_system(setup.system().label("setup"))
-        .add_startup_system(spawn_bird.system().after("setup"))
-        .add_startup_system(spawn_clouds.system().after("setup"))
+        .add_startup_system(spawn_bird.after("setup"))
+        .add_startup_system(spawn_clouds.after("setup"))
         .add_system(bevy::input::system::exit_on_esc_system.system())
         .add_system(on_press.system())
         .add_system_set(
@@ -68,20 +68,16 @@ fn main() {
                 .with_system(animate_flying_bird.system())
                 .with_system(press_to_start.system()),
         )
-        .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_pillars.system()))
+        .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_pillars))
         .add_system_set(
             SystemSet::on_update(GameState::Playing)
                 .with_system(animate_flappin_bird.system())
                 .with_system(flap.system())
                 .with_system(collision_detection.system()),
         )
-        .add_system_set(SystemSet::on_enter(GameState::GameOver).with_system(game_over.system()))
-        .add_system_set(
-            SystemSet::on_update(GameState::GameOver).with_system(press_to_start.system()),
-        )
-        .add_system_set(
-            SystemSet::on_exit(GameState::GameOver).with_system(despawn_pillars.system()),
-        )
+        .add_system_set(SystemSet::on_enter(GameState::GameOver).with_system(game_over))
+        .add_system_set(SystemSet::on_update(GameState::GameOver).with_system(press_to_start))
+        .add_system_set(SystemSet::on_exit(GameState::GameOver).with_system(despawn_pillars))
         .add_system_set(
             SystemSet::new()
                 .with_run_criteria(FixedTimestep::step(1.0 * FRAME))
@@ -152,9 +148,11 @@ fn press_to_start(
 // THE BIRD ///////////////////////////////////////////////////////////////////
 
 // Component
+#[derive(Component)]
 struct Bird;
 
 // Component
+#[derive(Component)]
 struct BirdPhysics {
     velocity: f32,
     acceleration: f32,
@@ -164,7 +162,6 @@ fn spawn_bird(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    quad: Res<PixelSpriteQuad>,
 ) {
     let texture_atlas = texture_atlases.add(TextureAtlas::from_grid(
         asset_server.load("flappin-bird.png"),
@@ -182,7 +179,6 @@ fn spawn_bird(
         .insert_bundle(SpriteSheetBundle {
             texture_atlas,
             transform: Transform::from_translation(Vec3::new(BIRD_X, 0.0, 1.0)),
-            mesh: quad.clone().into(),
             ..Default::default()
         })
         .insert(Timer::from_seconds(0.150, true));
@@ -195,7 +191,7 @@ fn animate_flying_bird(
     for (mut timer, mut sprite) in query.iter_mut() {
         timer.tick(time.delta());
         if timer.finished() {
-            sprite.index = ((sprite.index as usize + 1) % 3) as u32;
+            sprite.index = (sprite.index as usize + 1) % 3;
         }
     }
 }
@@ -279,13 +275,13 @@ fn collision_detection(
 // THE PILLARS ////////////////////////////////////////////////////////////////
 
 // Component
+#[derive(Component)]
 struct Pillar;
 
 fn spawn_pillars(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    quad: Res<PixelSpriteQuad>,
     mut rng: ResMut<Rng>,
 ) {
     let atlas = texture_atlases.add(TextureAtlas::from_grid(
@@ -304,7 +300,6 @@ fn spawn_pillars(
             .insert_bundle(SpriteSheetBundle {
                 texture_atlas: atlas.clone(),
                 transform: Transform::from_xyz(x, (y - PILLAR_HEIGHT / 2.0).round(), 2.0),
-                mesh: quad.clone().into(),
                 ..Default::default()
             });
         x += PILLAR_SPACING;
@@ -337,13 +332,13 @@ fn despawn_pillars(mut commands: Commands, pillars: Query<Entity, With<Pillar>>)
 // THE CLOUDS /////////////////////////////////////////////////////////////////
 
 // Component
+#[derive(Component)]
 struct Cloud;
 
 fn spawn_clouds(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    quad: Res<PixelSpriteQuad>,
     mut rng: ResMut<Rng>,
 ) {
     let clouds_atlas = texture_atlases.add(TextureAtlas::from_grid(
@@ -363,10 +358,9 @@ fn spawn_clouds(
                 texture_atlas: clouds_atlas.clone(),
                 transform: Transform::from_xyz(x, y, 0.0),
                 sprite: TextureAtlasSprite {
-                    index: rng.rand_range(0..4),
+                    index: rng.rand_range(0..4) as usize,
                     ..Default::default()
                 },
-                mesh: quad.clone().into(),
                 ..Default::default()
             });
         x += CLOUD_WIDTH;
@@ -386,7 +380,7 @@ fn animate_clouds(
         if transform.translation.x + CLOUD_WIDTH < LEFT {
             let y = BOTTOM + 40.0 + rng.rand_range(0..(HEIGHT - 80.0 - CLOUD_HEIGHT) as u32) as f32;
             *transform = Transform::from_xyz(RIGHT, y, 0.0);
-            sprite.index = rng.rand_range(0..4);
+            sprite.index = rng.rand_range(0..4) as usize;
             sprite.flip_x = rng.rand_range(0..2) > 0;
         }
     }

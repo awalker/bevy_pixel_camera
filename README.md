@@ -94,3 +94,8 @@ Licensed under either of
 * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
 at your option.
+
+### Bevy 0.6 To-dos
+
+* Moved from quad to sprites, but the sprite origin in back at the center. That needs fixed to maintain compatibility.
+* Update documentation and examples.
