@@ -118,10 +118,10 @@ pub struct PixelProjection {
     pub desired_height: Option<i32>,
 
     /// If neither `desired_width` nor `desired_height` are present, zoom can be
-    /// manually set. The value detemines the size of the virtual pixels.
+    /// manually set. The value determines the size of the virtual pixels.
     pub zoom: i32,
 
-    // If true, (0, 0) is the pixel closest to the center of the windoe,
+    // If true, (0, 0) is the pixel closest to the center of the window,
     // otherwise it's at bottom left.
     pub centered: bool,
 }

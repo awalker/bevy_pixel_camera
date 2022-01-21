@@ -6,7 +6,7 @@
 //! While it is possible to achieve pixel-perfect rendering with Bevy's own
 //! camera and `OrthographicProjection`, doing so correctly requires to
 //! configure it in a specific way (you can't just use
-//! `OrhtographicCameraBundle`).
+//! `OrthographicCameraBundle`).
 //!
 //! This plugin provides a camera which can be easily configured by specifying
 //! either the size of the virtual pixels, or the desired resolution.
@@ -26,7 +26,7 @@
 //!
 //! There is several possible methods to render pixel-art based games. This
 //! crate simply upscale each sprite, and correctly align them on a virtual
-//! pixel grid. Another option would be to render the sprites to an offscrenn
+//! pixel grid. Another option would be to render the sprites to an offscreen
 //! texture, and then upscale only this texture. There is advantages and
 //! drawbacks to both approaches:
 //! - the offscreen method is probably more efficient in most cases;
@@ -37,7 +37,7 @@
 //!   paired with a specialized sprite system based on integer transforms;
 //! - the method in this crate allows for smoother scrolling and movement of
 //!   sprites, if you're willing to temporarily break the alignment on virtual
-//!   pixels (this would be even more effective with a dedicated upscaling
+//!   pixels (this would be even more effective with a dedicated up-scaling
 //!   shader).
 //!
 //! ## Example code
